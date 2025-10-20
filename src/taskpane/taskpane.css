@@ -1,0 +1,215 @@
+/* 
+ * Copyright (c) Microsoft Corporation. All rights reserved. Licensed under the MIT license.
+ * See LICENSE in the project root for license information.
+ */
+
+ html,
+ body {
+     width: 100%;
+     height: 100%;
+     margin: 0;
+     padding: 0;
+     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+     background-color: #f8f9fa;
+ }
+ 
+ ul {
+     margin: 0;
+     padding: 0;
+ }
+ 
+ .ms-welcome__main {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    align-items: stretch;
+    flex: 1 0 0;
+    padding: 20px;
+    max-width: 400px;
+    margin: 0 auto;
+ }
+ 
+ .ms-welcome__main > h2 {
+     width: 100%;
+     text-align: center;
+ }
+
+ .app-body-hidden {
+     display: none;
+ }
+
+ /* Header Section */
+ .header-section { 
+     margin-bottom: 25px;
+     padding-bottom: 15px;
+     border-bottom: 2px solid #e1e5e9;
+ }
+
+ .app-title {
+     font-size: 18px;
+     font-weight: 600;
+     color: #323130;
+     margin: 0 0 15px 0;
+ }
+
+ .run-button {
+     background-color: #0078d4;
+     border: none;
+     color: white;
+     padding: 8px 16px;
+     border-radius: 4px;
+     cursor: pointer;
+     font-size: 14px;
+     font-weight: 500;
+ }
+
+ .run-button:hover {
+     background-color: #106ebe;
+ }
+
+ /* Ignore List Section */
+ .ignore-section {
+     margin-bottom: 20px;
+     padding: 15px;
+     background-color: #fff8e1;
+     border: 1px solid #ffcc02;
+     border-radius: 4px;
+ }
+
+ .ignore-textarea {
+     width: 100%;
+     height: 100px;
+     padding: 8px 12px;
+     border: 1px solid #d2d0ce;
+     border-radius: 4px;
+     font-size: 14px;
+     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+     resize: vertical;
+     box-sizing: border-box;
+     margin-bottom: 8px;
+ }
+
+ .ignore-textarea:focus {
+     outline: none;
+     border-color: #ff9800;
+     box-shadow: 0 0 0 2px rgba(255, 152, 0, 0.2);
+ }
+
+ .ignore-help {
+     font-size: 12px;
+     color: #605e5c;
+     line-height: 1.4;
+ }
+
+ /* Input Section */
+ .input-section {
+     margin-bottom: 20px;
+ }
+
+ .section-title {
+     font-size: 14px;
+     font-weight: 600;
+     color: #323130;
+     margin: 0 0 8px 0;
+ }
+
+ .input-textarea {
+     width: 100%;
+     height: 150px;
+     padding: 12px;
+     border: 1px solid #d2d0ce;
+     border-radius: 4px;
+     font-size: 14px;
+     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+     resize: vertical;
+     box-sizing: border-box;
+ }
+
+ .input-textarea:focus {
+     outline: none;
+     border-color: #0078d4;
+     box-shadow: 0 0 0 2px rgba(0, 120, 212, 0.2);
+ }
+
+ .example-text {
+     font-size: 12px;
+     color: #605e5c;
+     margin-top: 8px;
+     line-height: 1.4;
+ }
+
+ /* Output Section */
+ .output-section {
+     margin-bottom: 20px;
+ }
+
+ .output-textarea {
+     width: 100%;
+     min-height: 150px;
+     padding: 12px;
+     border: 1px solid #d2d0ce;
+     border-radius: 4px;
+     background-color: #f8f9fa;
+     font-size: 14px;
+     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+     color: #323130;
+     word-wrap: break-word;
+     box-sizing: border-box;
+     resize: vertical;
+ }
+
+ /* Convert Section */
+ .convert-section {
+     text-align: center;
+ }
+
+ .convert-button {
+     background-color: #107c10;
+     border: none;
+     color: white;
+     padding: 10px 20px;
+     border-radius: 4px;
+     cursor: pointer;
+     font-size: 14px;
+     font-weight: 500;
+ }
+
+ .convert-button:hover {
+     background-color: #0e6b0e;
+ }
+
+ /* Button styles */
+ .ms-Button {
+     display: inline-block;
+     text-decoration: none;
+     cursor: pointer;
+     border: none;
+     border-radius: 4px;
+     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+     font-size: 14px;
+     font-weight: 500;
+     line-height: 1.4;
+     text-align: center;
+     vertical-align: middle;
+     -webkit-user-select: none;
+     user-select: none;
+     transition: all 0.1s ease-in-out;
+ }
+
+ .ms-Button--primary {
+     background-color: #0078d4;
+     color: white;
+ }
+
+ .ms-Button--primary:hover {
+     background-color: #106ebe;
+ }
+
+ .ms-Button-label {
+     display: inline-block;
+     vertical-align: middle;
+ }
+
+ b {
+     font-weight: bold;
+ }

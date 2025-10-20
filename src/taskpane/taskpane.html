@@ -1,0 +1,61 @@
+<!-- Copyright (c) Microsoft Corporation. All rights reserved. Licensed under the MIT License. -->
+<!-- This file shows how to design a first-run page that provides a welcome screen to the user about the features of the add-in. -->
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Bijoy to Unicode Converter</title>
+
+    <!-- Office JavaScript API -->
+    <script type="text/javascript" src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"></script>
+
+    <!-- For more information on Fluent UI, visit https://developer.microsoft.com/fluentui#/. -->
+    <link rel="stylesheet" href="https://res-1.cdn.office.net/files/fabric-cdn-prod_20230815.002/office-ui-fabric-core/11.1.0/css/fabric.min.css"/>
+
+    <!-- Template styles -->
+    <link href="taskpane.css" rel="stylesheet" type="text/css" /> 
+</head>
+
+<body class="ms-font-m ms-welcome ms-Fabric">
+    <section id="sideload-msg" class="ms-welcome__main">
+        <h2 class="ms-font-xl">Please <a target="_blank" rel="noopener" href="https://learn.microsoft.com/office/dev/add-ins/testing/test-debug-office-add-ins#sideload-an-office-add-in-for-testing">sideload</a> your add-in to see app body.</h2>
+    </section>
+    <main id="app-body" class="ms-welcome__main app-body-hidden">
+        <!-- Header with title and Run button -->
+           <!-- Ignore List Section -->
+        <div class="ignore-section">
+            <h3 class="section-title">Ignore List</h3>
+            <textarea id="ignore-list" class="ignore-textarea" placeholder="Enter words to ignore (separated by commas or spaces)"></textarea>
+            <div class="ignore-help">Words in this list will be excluded from conversion</div>
+        </div>
+
+        <div class="header-section">
+            <h1 class="app-title">Bijoy to Unicode Converter</h1> 
+            <div role="button" id="run" class="run-button ms-Button ms-Button--primary">
+                <span class="ms-Button-label">Convert Selection</span>
+            </div>
+        </div> 
+
+        <!-- Input Section -->
+        <div class="input-section">
+            <h3 class="section-title">Input Text (Bijoy)</h3>
+            <textarea id="input-text" class="input-textarea" placeholder="Paste Bijoy text here"></textarea>
+        </div>
+
+        <!-- Output Section -->
+        <div class="output-section">
+            <h3 class="section-title">Output Text (Unicode)</h3>
+            <textarea id="output-text" class="output-textarea" readonly placeholder="Converted text will appear here..."></textarea>
+        </div>
+    </main>
+</body>
+    <script type="text/javascript" src="../bijoy/bijoy2uni.js"></script>
+    <script type="text/javascript" src="../bijoy/bijoycommon.js"></script>
+    <script type="text/javascript" src="../bijoy/bijoyLayout.js"></script>
+    <script type="text/javascript" src="../bijoy/bijoyCount.js"></script>
+    <script type="text/javascript" src="../bijoy/bijoyConvert.js"></script>
+</html>
