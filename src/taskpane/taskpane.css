@@ -52,7 +52,14 @@
      margin: 0 0 15px 0;
  }
 
- .run-button {
+ .button-group {
+     display: flex;
+     gap: 10px;
+     margin-top: 10px;
+ }
+
+ .run-button, .font-info-button {
+     flex: 1;
      background-color: #0078d4;
      border: none;
      color: white;
@@ -63,8 +70,16 @@
      font-weight: 500;
  }
 
+ .font-info-button {
+     background-color: #6c757d;
+ }
+
  .run-button:hover {
      background-color: #106ebe;
+ }
+
+ .font-info-button:hover {
+     background-color: #5a6268;
  }
 
  /* Ignore List Section */

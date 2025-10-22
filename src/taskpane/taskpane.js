@@ -12,6 +12,7 @@ Office.onReady((info) => {
     
     // Set up event handlers
     document.getElementById("run").onclick = convertSelectionFromPane;
+    document.getElementById("font-info").onclick = getFontInfoOnly;
     
     // Auto-convert on input and paste
     document.getElementById("input-text").addEventListener("input", autoConvertText);
@@ -37,19 +38,17 @@ export async function convertSelectionFromPane() {
     console.log("[Pane] Starting conversion with ignore list:", ignoreList);
     
     const selection = context.document.getSelection();   
-    selection.load("text");
-    await context.sync(); 
-    
-    const tableColumns = context.document.sections.items;   
-    tableColumns.load("items, text");
+    selection.load("text, font");
     await context.sync();
     
-    console.log("tableColumns", tableColumns);
-
     const text = selection.text || "";
     if (!text.trim()) return;
     
     console.log("[Pane] Selection text:", text);
+    console.log("[Pane] Selection font:", selection.font);
+    
+    // Get word-level font information
+    await getWordFontInfo(context, selection);
     
     // Try to get text ranges for better granular control
     const delimiters = ["\r", "\n", "\v", "\u000B", "\u2028", "\u2029"];  
@@ -153,113 +152,31 @@ function getIgnoreList() {
   return words;
 }
 
-// Functional Trie implementation
-function createTrieNode() {
-  return {
-    children: {},
-    isEndOfWord: false
-  };
-}
-
-function createTrie() {
-  return {
-    root: createTrieNode()
-  };
-}
-
-function insertWord(trie, word) {
-  let node = trie.root;
-  for (let i = 0; i < word.length; i++) {
-    const char = word[i];
-    if (!node.children[char]) {
-      node.children[char] = createTrieNode();
-    }
-    node = node.children[char];
-  }
-  node.isEndOfWord = true;
-}
-
-function searchWord(trie, word) {
-  let node = trie.root;
-  for (let i = 0; i < word.length; i++) {
-    const char = word[i];
-    if (!node.children[char]) {
-      return false;
-    }
-    node = node.children[char];
-  }
-  return node.isEndOfWord;
-}
-
-function hasPrefix(trie, prefix) {
-  let node = trie.root;
-  for (let i = 0; i < prefix.length; i++) {
-    const char = prefix[i];
-    if (!node.children[char]) {
-      return false;
-    }
-    node = node.children[char];
-  }
-  return true;
-}
-
-// Optimized data structures for exact and prefix matching
-let ignoreWordSet = new Set(); // O(1) exact matches
-let ignoreWordTrie = createTrie(); // O(m) prefix matching
-let ignoreListHash = null; // Track ignore list changes
-
-// Preprocess ignore list into optimized data structures
-function preprocessIgnoreList(ignoreList) {
-  if (!ignoreList || ignoreList.length === 0) {
-    ignoreWordSet.clear();
-    ignoreWordTrie = createTrie();
-    return;
-  }
-  
-  // Create hash to detect changes
-  const newHash = ignoreList.join('|');
-  if (ignoreListHash === newHash) {
-    return; // No changes, keep existing structures
-  }
-  
-  ignoreListHash = newHash;
-  ignoreWordSet.clear();
-  ignoreWordTrie = createTrie();
-  
-  // Build optimized data structures - preserve all Bijoy characters
-  for (const word of ignoreList) {
-    const cleanWord = word.trim();
-    if (cleanWord.length === 0) continue;
-    
-    // Add exact match (preserves all Bijoy characters)
-    ignoreWordSet.add(cleanWord);
-    insertWord(ignoreWordTrie, cleanWord);
-  }
-}
-
-// Optimized word matching - O(1) exact + O(m) prefix matching
+// Function to check if a word should be ignored (simplified)
 function shouldIgnoreWord(word, ignoreList) {
   if (!word || !ignoreList || ignoreList.length === 0) {
     return false;
   }
   
   const cleanWord = word.trim();
-  if (cleanWord.length === 0) return false;
   
-  // O(1) exact match check (preserves all Bijoy characters)
-  if (ignoreWordSet.has(cleanWord)) {
+  // Check for exact match (most common case)
+  if (ignoreList.includes(cleanWord)) {
     return true;
   }
   
-  // O(m) prefix match check (for cases like "test" matching "testing")
-  if (hasPrefix(ignoreWordTrie, cleanWord)) {
-    return true;
+  // Check for case-insensitive match
+  const lowerWord = cleanWord.toLowerCase();
+  for (const ignoreWord of ignoreList) {
+    if (ignoreWord.toLowerCase() === lowerWord) {
+      return true;
+    }
   }
   
   return false;
 }
 
-// Optimized conversion using single-pass algorithm
+// Function to convert text with ignore list (optimized for large datasets)
 async function convertTextWithIgnoreList(text, ignoreList) {
   if (!text.trim()) {
     return text;
@@ -270,52 +187,154 @@ async function convertTextWithIgnoreList(text, ignoreList) {
     return ConvertToUnicode("bijoy", text);
   }
   
-  // Preprocess ignore list into optimized data structures (O(n) once)
-  preprocessIgnoreList(ignoreList);
+  // Split text into words while preserving spaces
+  const words = text.split(/(\s+)/);
+  const convertedWords = new Array(words.length);
   
-  // Single-pass processing with optimized word detection
-  const result = [];
-  let currentWord = '';
-  let inWord = false;
-  let processedWords = 0;
+  // Process words in batches to avoid blocking the UI
+  const batchSize = 50; // Process 50 words at a time
   
-  for (let i = 0; i < text.length; i++) {
-    const char = text[i];
+  for (let i = 0; i < words.length; i += batchSize) {
+    const batch = words.slice(i, i + batchSize);
     
-    // Check if character is word boundary
-    if (/\s/.test(char)) {
-      if (inWord && currentWord.length > 0) {
-        // Process complete word
-        if (shouldIgnoreWord(currentWord, ignoreList)) {
-          result.push(currentWord);
-        } else {
-          result.push(ConvertToUnicode("bijoy", currentWord));
-          processedWords++;
-        }
-        currentWord = '';
-        inWord = false;
+    for (let j = 0; j < batch.length; j++) {
+      const wordIndex = i + j;
+      const word = batch[j];
+      
+      // Skip conversion if word is only whitespace
+      if (/^\s+$/.test(word)) {
+        convertedWords[wordIndex] = word;
+        continue;
       }
-      result.push(char); // Add whitespace
-    } else {
-      // Building word
-      currentWord += char;
-      inWord = true;
+      
+      // Skip conversion for parentheses characters
+      if (word === "(" || word === ")") {
+        console.log(`[Convert] Skipping conversion for parentheses character: "${word}"`);
+        convertedWords[wordIndex] = word;
+        continue;
+      }
+      
+      // Use optimized matching logic to check if word should be ignored
+      if (shouldIgnoreWord(word, ignoreList)) {
+        convertedWords[wordIndex] = word; // Return original word without conversion
+        continue;
+      }
+      
+      // Convert the word
+      convertedWords[wordIndex] = ConvertToUnicode("bijoy", word);
     }
     
-    // Yield control for very large texts
-    if (processedWords > 0 && processedWords % 1000 === 0) {
+    // Yield control back to the browser for large datasets
+    if (words.length > 100 && i + batchSize < words.length) {
+      // Use setTimeout to yield control (only for large datasets)
       await new Promise(resolve => setTimeout(resolve, 0));
     }
   }
   
-  // Process final word if exists
-  if (inWord && currentWord.length > 0) {
-    if (shouldIgnoreWord(currentWord, ignoreList)) {
-      result.push(currentWord);
-    } else {
-      result.push(ConvertToUnicode("bijoy", currentWord));
+  return convertedWords.join('');
+}
+
+// Optimized function to get word-level font information and convert SutonnyMJ words
+async function getWordFontInfo(context, selection) {
+  try {
+    console.log("[Font Info] Starting word-level font analysis...");
+    
+    // Get text ranges for each word
+    const wordDelimiters = [" ",",", "\t", "\r", "\n", "\v", "\u000B", "\u2028", "\u2029", "(", ")"];
+    const wordRanges = selection.getTextRanges(wordDelimiters, true);
+    
+    // First load the items collection
+    context.load(wordRanges, "items");
+    await context.sync();
+    
+    // Then load text and font properties for each range
+    wordRanges.items.forEach(range => {
+      range.load("text, font");
+    });
+    await context.sync();
+    
+    console.log(`[Font Info] Found ${wordRanges.items.length} word ranges`);
+    
+    // Get ignore list for conversion
+    const ignoreList = getIgnoreList();
+    
+    // Process each word range and log font information
+    for (let i = wordRanges.items.length - 1; i >= 0; i--) {
+      const range = wordRanges.items[i];
+      const word = range.text ? range.text.trim() : "";
+      
+      if (word) {
+        const fontName = range.font.name || "Unknown";
+        const fontSize = range.font.size || "Unknown";
+        const fontColor = range.font.color || "Unknown";
+        
+        console.log(`[Font Info] Word ${i + 1}: "${word}" | Font: ${fontName} | Size: ${fontSize} | Color: ${fontColor}`);
+        
+        // Check if font is SutonnyMJ and convert to Unicode
+        if (fontName.toLowerCase().includes("sutonnymj")) {
+          console.log(`[Font Info] Converting SutonnyMJ word: "${word}"`);
+          
+          // Skip conversion for parentheses characters
+          if (word === "(" || word === ")") {
+            console.log(`[Font Info] Skipping conversion for parentheses character: "${word}"`);
+            continue;
+          }
+          
+          // Check if word should be ignored
+          if (!shouldIgnoreWord(word, ignoreList)) {
+            try {
+              // Check if ConvertToUnicode function is available
+              if (typeof ConvertToUnicode !== 'undefined') {
+                const convertedWord = ConvertToUnicode("bijoy", word);
+                console.log(`[Font Info] Converted "${word}" to "${convertedWord}"`);
+                
+                // Replace the word with converted version
+                range.insertText(convertedWord, Word.InsertLocation.replace);
+                await context.sync();
+              } else {
+                console.error("[Font Info] ConvertToUnicode function is not available");
+              }
+            } catch (conversionError) {
+              console.error(`[Font Info] Error converting word "${word}":`, conversionError);
+            }
+          } else {
+            console.log(`[Font Info] Skipping conversion for ignored word: "${word}"`);
+          }
+        }
+      }
     }
+    
+    console.log("[Font Info] Word-level font analysis and conversion completed");
+    
+  } catch (error) {
+    console.error("[Font Info] Error getting word font information:", error);
   }
-  
-  return result.join('');
+}
+
+
+// Standalone function to get font information and convert SutonnyMJ words
+export async function getFontInfoOnly() {
+  return Word.run(async (context) => {
+    try {
+      console.log("[Font Info Only] Starting font analysis and conversion...");
+      
+      const selection = context.document.getSelection();
+      selection.load("text");
+      await context.sync();
+      
+      const text = selection.text || "";
+      if (!text.trim()) {
+        console.log("[Font Info Only] No text selected");
+        return;
+      }
+      
+      console.log("[Font Info Only] Selected text:", text);
+      
+      // Get word-level font information and convert SutonnyMJ words
+      await getWordFontInfo(context, selection);
+      
+    } catch (error) {
+      console.error("[Font Info Only] Error:", error);
+    }
+  });
 }
