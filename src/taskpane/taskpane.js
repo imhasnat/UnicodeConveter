@@ -158,7 +158,8 @@ async function getWordFontInfo(context, selection) {
 // Process words within selection only (conservative approach)
 async function processWordsWithinSelection(context, selection) {
   try { 
-    const wordDelimiters = [" ",",", "\t", "\r", "\n", "\v", "\u000B", "\u2028", "\u2029", "(", ")"];
+    console.log("[Word Processing] Starting word-by-word processing...");
+    const wordDelimiters = [" ",",", "\t", "\r", "\n", "\v", "\u000B", "\u2028", "\u2029", "(", ")", "-", "=", "/"];
     const wordRanges = selection.getTextRanges(wordDelimiters, true);
      
     context.load(wordRanges, "items");
@@ -180,7 +181,7 @@ async function processWordsWithinSelection(context, selection) {
       const word = range.text ? range.text.trim() : "";
       const fontName = range.font.name || "Unknown";
  
-      if (word && fontName.toLowerCase().includes("sutonnymj") && word !== "(" && word !== ")") {
+      if (word && fontName.toLowerCase().includes("sutonnymj") && word !== "(" && word !== ")" && word !== "|") {
         try {
           // console.log(`[Font Info] Converting word: "${word}"`);
           const convertedWord = ConvertToUnicode("bijoy", word);
