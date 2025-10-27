@@ -26,20 +26,11 @@
     </section>
     <main id="app-body" class="ms-welcome__main app-body-hidden">
         <!-- Header with title and Run button -->
-           <!-- Ignore List Section -->
-        <div class="ignore-section">
-            <h3 class="section-title">Ignore List</h3>
-            <textarea id="ignore-list" class="ignore-textarea" placeholder="Enter words to ignore (separated by commas or spaces)"></textarea>
-            <div class="ignore-help">Words in this list will be excluded from conversion</div>
-        </div>
 
         <div class="header-section">
             <h1 class="app-title">Bijoy to Unicode Converter</h1> 
             <div class="button-group">
-                <div role="button" id="run" class="run-button ms-Button ms-Button--primary">
-                    <span class="ms-Button-label">Convert Selection</span>
-                </div>
-                <div role="button" id="font-info" class="font-info-button ms-Button ms-Button--secondary">
+                <div role="button" id="font-info" class="font-info-button ms-Button ms-Button--primary">
                     <span class="ms-Button-label">Convert SutonnyMJ</span>
                 </div>
             </div>
@@ -55,6 +46,15 @@
         <div class="output-section">
             <h3 class="section-title">Output Text (Unicode)</h3>
             <textarea id="output-text" class="output-textarea" readonly placeholder="Converted text will appear here..."></textarea>
+        </div>
+
+        <!-- Loading Spinner Overlay -->
+        <div id="loading-overlay" class="loading-overlay-hidden">
+            <div class="loading-dialog">
+                <div class="spinner"></div>
+                <div id="loading-text">Converting text...</div>
+                <div id="progress-info" class="progress-info"></div>
+            </div>
         </div>
     </main>
 </body>

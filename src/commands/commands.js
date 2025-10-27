@@ -15,13 +15,11 @@ async function convertSelectionImpl() {
     // Log entire selection text for debugging
     selection.load("text");
     await context.sync();
-    console.log("[Cmd] Entire selection text:", selection.text);
     // Prefer splitting selection into text ranges to support non-contiguous/column selections
     const delimiters = ["\r", "\n", "\v", "\u000B", "\u2028", "\u2029"]; // CR, LF, VT, Unicode LS/PS (no TAB)
     const textRanges = selection.getTextRanges(delimiters, true);
     context.load(textRanges, "items");
     await context.sync();
-    console.log("[Cmd] textRanges count:", textRanges.items.length);
 
     // If it is a single range (e.g., vertical selection treated as one block),
     // convert the entire selection at once.
@@ -45,7 +43,6 @@ async function convertSelectionImpl() {
         selection.load("text");
         await context.sync();
         const text = selection.text || "";
-        console.log("[Cmd] Fallback: whole selection text:", text);
         if (!text) return;
         // eslint-disable-next-line no-undef
         const converted = ConvertToUnicode("bijoy", text);
@@ -60,7 +57,6 @@ async function convertSelectionImpl() {
         const r = paraRanges[i];
         const txt = r.text || "";
         if (!txt) continue;
-        console.log("[Cmd] Paragraph range text:", txt);
         // eslint-disable-next-line no-undef
         const converted = ConvertToUnicode("bijoy", txt);
         r.insertText(converted, Word.InsertLocation.replace);
@@ -76,7 +72,6 @@ async function convertSelectionImpl() {
         const tr = textRanges.items[i];
         const txt = tr.text || "";
         if (!txt) continue;
-        console.log(`[Cmd] Sub-range #${i} text:`, txt);
         // eslint-disable-next-line no-undef
         const converted = ConvertToUnicode("bijoy", txt);
         tr.insertText(converted, Word.InsertLocation.replace);
@@ -96,7 +91,6 @@ async function convertSelectionImpl() {
       const wr = wordRanges.items[i];
       const wtxt = wr.text || "";
       if (!wtxt) continue;
-      console.log(`[Cmd] Word sub-range #${i} text:`, wtxt);
       // eslint-disable-next-line no-undef
       const converted = ConvertToUnicode("bijoy", wtxt);
       wr.insertText(converted, Word.InsertLocation.replace);

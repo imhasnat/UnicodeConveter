@@ -19,14 +19,21 @@
  }
  
  .ms-welcome__main {
+    display: -ms-flexbox;
     display: flex;
+    -ms-flex-direction: column;
     flex-direction: column;
+    -ms-flex-wrap: nowrap;
     flex-wrap: nowrap;
+    -ms-flex-align: stretch;
     align-items: stretch;
+    -ms-flex: 1 0 0;
     flex: 1 0 0;
     padding: 20px;
     max-width: 400px;
-    margin: 0 auto;
+     margin: 0 auto;
+     /* Fallback for older browsers */
+     zoom: 1;
  }
  
  .ms-welcome__main > h2 {
@@ -53,12 +60,21 @@
  }
 
  .button-group {
+     display: -ms-flexbox;
      display: flex;
-     gap: 10px;
      margin-top: 10px;
+ }
+ 
+ .button-group > * {
+     margin-right: 10px;
+ }
+ 
+ .button-group > *:last-child {
+     margin-right: 0;
  }
 
  .run-button, .font-info-button {
+     -ms-flex: 1;
      flex: 1;
      background-color: #0078d4;
      border: none;
@@ -99,6 +115,7 @@
      border-radius: 4px;
      font-size: 14px;
      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+     -ms-resize: vertical;
      resize: vertical;
      box-sizing: border-box;
      margin-bottom: 8px;
@@ -136,6 +153,7 @@
      border-radius: 4px;
      font-size: 14px;
      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+     -ms-resize: vertical;
      resize: vertical;
      box-sizing: border-box;
  }
@@ -168,8 +186,10 @@
      font-size: 14px;
      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
      color: #323130;
+     -ms-word-wrap: break-word;
      word-wrap: break-word;
      box-sizing: border-box;
+     -ms-resize: vertical;
      resize: vertical;
  }
 
@@ -207,6 +227,7 @@
      text-align: center;
      vertical-align: middle;
      -webkit-user-select: none;
+     -ms-user-select: none;
      user-select: none;
      transition: all 0.1s ease-in-out;
  }
@@ -225,6 +246,66 @@
      vertical-align: middle;
  }
 
- b {
-     font-weight: bold;
+b {
+    font-weight: bold;
+}
+
+/* Loading Spinner Styles */
+.loading-overlay-hidden {
+    display: none;
+}
+
+ .loading-overlay {
+     position: fixed;
+     top: 0;
+     left: 0;
+     width: 100%;
+     height: 100%;
+     background-color: rgba(0, 0, 0, 0.5);
+     z-index: 1000;
+     display: -ms-flexbox;
+     display: flex;
+     -ms-flex-pack: center;
+     justify-content: center;
+     -ms-flex-align: center;
+     align-items: center;
+     /* Fallback for older browsers */
+     zoom: 1;
  }
+
+.loading-dialog {
+    background: white;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    text-align: center;
+    min-width: 200px;
+}
+
+.spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #0078d4;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 15px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+#loading-text {
+    font-size: 16px;
+    font-weight: 500;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.progress-info {
+    font-size: 14px;
+    color: #666;
+    margin-top: 10px;
+}
