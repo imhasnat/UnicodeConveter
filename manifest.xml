@@ -13,24 +13,20 @@
     <AppDomain>https://www.contoso.com</AppDomain>
   </AppDomains>
   <Hosts>
+
+
+
+  
     <Host Name="Document">
-      <FileFormats>
-        <FileFormat Name="docx"/>
-        <FileFormat Name="doc"/>
-      </FileFormats>
     </Host>
   </Hosts>
   <DefaultSettings>
     <SourceLocation DefaultValue="https://localhost:3000/taskpane.html"/>
   </DefaultSettings>
   <Permissions>ReadWriteDocument</Permissions>
-  <VersionOverrides xmlns="http://schemas.microsoft.com/office/taskpaneappversionoverrides" xsi:type="VersionOverridesV1_0.1">
+  <VersionOverrides xmlns="http://schemas.microsoft.com/office/taskpaneappversionoverrides" xsi:type="VersionOverridesV1_0">
     <Hosts>
       <Host xsi:type="Document">
-        <FileFormats>
-          <FileFormat Name="docx"/>
-          <FileFormat Name="doc"/>
-        </FileFormats>
         <DesktopFormFactor>
           <GetStarted>
             <Title resid="GetStarted.Title"/>
