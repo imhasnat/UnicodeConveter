@@ -12,7 +12,7 @@ Office.onReady((info) => {
     document.getElementById("app-body").classList.remove("app-body-hidden");
      
     document.getElementById("font-info").onclick = getFontInfoOnly;
-    document.getElementById("apply-arabic-font-selection").onclick = applyArabicFontToSelection;
+    // document.getElementById("apply-arabic-font-selection").onclick = applyArabicFontToSelection;
      
     document.getElementById("input-text").addEventListener("input", autoConvertText);
     document.getElementById("input-text").addEventListener("paste", handlePaste); 
@@ -136,17 +136,18 @@ async function getWordFontInfo(context, selection) {
     
     if (fontName.toLowerCase().includes("sutonnymj")) {  
       try {
+        const originalSize = selectionRange.font.size;
         const convertedText = ConvertToUnicode("bijoy", selectedText);
         // console.log(`[Font Info] Converted: "${selectedText}" -> "${convertedText}"`); 
         await selectionRange.insertText(convertedText, Word.InsertLocation.replace);
         
-        // Apply Arabic font if the converted text contains Arabic characters
-        // Arabic font-family - customize this to your preferred Arabic font
-        const arabicFontFamily = "Arabic Typesetting"; // Change to your preferred Arabic font
-        if (containsArabic(convertedText)) {
-          selectionRange.font.name = arabicFontFamily;
-          await context.sync();
+        // Set only the font family to Kalpurush; preserve existing size and styling
+        selectionRange.font.name = "Kalpurush";
+        if (typeof originalSize === "number" && !isNaN(originalSize) && originalSize > 0) {
+          console.log("originalSize", originalSize);
+          selectionRange.font.size = originalSize;
         }
+        await context.sync();
         
         updateLoadingProgress("Converting text...", "Selection converted successfully");
         
@@ -204,14 +205,17 @@ async function processWordsWithinSelection(context, selection) {
       if (word && fontName.toLowerCase().includes("sutonnymj") && word !== "(" && word !== ")" && word !== "|") {
         try {
           // console.log(`[Font Info] Converting word: "${word}"`);
+          const originalSize = range.font.size;
           const convertedWord = ConvertToUnicode("bijoy", word);
           // console.log(`[Font Info] Converted: "${word}" -> "${convertedWord}"`);
           
           await range.insertText(convertedWord, Word.InsertLocation.replace);
           
-          // Apply Arabic font if the converted text contains Arabic characters
-          if (containsArabic(convertedWord)) {
-            range.font.name = arabicFontFamily;
+          // Set only the font family to Kalpurush; preserve existing size and styling
+          range.font.name = "Kalpurush";
+          if (typeof originalSize === "number" && !isNaN(originalSize) && originalSize > 0) {
+            console.log("originalSize", originalSize);
+            range.font.size = originalSize;
           }
           
           convertedCount++;
@@ -360,4 +364,3 @@ export async function applyArabicFontToSelection() {
     }
   });
 }
-

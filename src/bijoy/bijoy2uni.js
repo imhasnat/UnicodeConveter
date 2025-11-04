@@ -245,7 +245,9 @@ var bijoy_string_conversion_map = {
     "\\&": "্",
     "…": "ৃ", 
     "æ": "ু",
-    "²": "্"
+    "²": "্",
+    "\\|":"।",
+    "Ñ": "-"
 };
 var somewherein_string_conversion_map = {
     "cy&Ä": "পুঞ্জ",
@@ -483,7 +485,9 @@ var somewherein_string_conversion_map = {
     "Ò": "\u201C",
     "Ó": "\u201D",
     "æ": "ু",
-    "²": "্"
+    "²": "্",
+    "\\|":"।",
+    "Ñ": "-"
 };
 var boisakhi_string_conversion_map = {
     "Ûø": "্র্য",
@@ -717,7 +721,8 @@ var boisakhi_string_conversion_map = {
     "Þ": "্র",
     "Û": "্র",
     "ê": "র্",
-    "ø": "্য"
+    "ø": "্য",
+    "\\|":"।"
 };
 function ReArrangeUnicodeConvertedText(str) {
     for (var i = 0; i < str.length; i++) {
