@@ -2,21 +2,14 @@
 <OfficeApp xmlns="http://schemas.microsoft.com/office/appforoffice/1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bt="http://schemas.microsoft.com/office/officeappbasictypes/1.0" xmlns:ov="http://schemas.microsoft.com/office/taskpaneappversionoverrides" xsi:type="TaskPaneApp">
   <Id>321a1969-a4bd-43ce-9ef6-f0d8401e0b8d</Id>
   <Version>1.0.0.0</Version>
-  <ProviderName>Contoso</ProviderName>
+  <ProviderName>Hasnat Mahbub</ProviderName>
   <DefaultLocale>en-US</DefaultLocale>
-  <DisplayName DefaultValue="BijoyToUnicode"/>
-  <Description DefaultValue="A template to get started."/>
-  <IconUrl DefaultValue="https://localhost:3000/assets/icon-32.png"/>
-  <HighResolutionIconUrl DefaultValue="https://localhost:3000/assets/icon-64.png"/>
-  <SupportUrl DefaultValue="https://www.contoso.com/help"/>
-  <AppDomains>
-    <AppDomain>https://www.contoso.com</AppDomain>
-  </AppDomains>
-  <Hosts>
-
-
-
-  
+  <DisplayName DefaultValue="Bijoy to Unicode Converter"/>
+  <Description DefaultValue="Convert Bangla text from Bijoy (e.g., SutonnyMJ) to Unicode directly inside Microsoft Word."/>
+  <IconUrl DefaultValue="https://localhost:3000/assets/images/icon-32.png"/>
+  <HighResolutionIconUrl DefaultValue="https://localhost:3000/assets/images/icon-64.png"/>
+  <SupportUrl DefaultValue="https://github.com/imhasnat/UnicodeConveter"/>
+  <Hosts> 
     <Host Name="Document">
     </Host>
   </Hosts>
@@ -67,23 +60,23 @@
     </Hosts>
     <Resources>
       <bt:Images>
-        <bt:Image id="Icon.16x16" DefaultValue="https://localhost:3000/assets/icon-16.png"/>
-        <bt:Image id="Icon.32x32" DefaultValue="https://localhost:3000/assets/icon-32.png"/>
-        <bt:Image id="Icon.80x80" DefaultValue="https://localhost:3000/assets/icon-80.png"/>
+        <bt:Image id="Icon.16x16" DefaultValue="https://localhost:3000/assets/images/icon-16.png"/>
+        <bt:Image id="Icon.32x32" DefaultValue="https://localhost:3000/assets/images/icon-32.png"/>
+        <bt:Image id="Icon.80x80" DefaultValue="https://localhost:3000/assets/images/icon-80.png"/>
       </bt:Images>
       <bt:Urls>
-        <bt:Url id="GetStarted.LearnMoreUrl" DefaultValue="https://go.microsoft.com/fwlink/?LinkId=276812"/>
+        <bt:Url id="GetStarted.LearnMoreUrl" DefaultValue="https://github.com/imhasnat/UnicodeConveter"/>
         <bt:Url id="Commands.Url" DefaultValue="https://localhost:3000/commands.html"/>
         <bt:Url id="Taskpane.Url" DefaultValue="https://localhost:3000/taskpane.html"/>
       </bt:Urls>
       <bt:ShortStrings>
-        <bt:String id="GetStarted.Title" DefaultValue="Get started with your sample add-in!"/>
-        <bt:String id="CommandsGroup.Label" DefaultValue="Commands Group"/>
-        <bt:String id="TaskpaneButton.Label" DefaultValue="Show Task Pane"/>
+        <bt:String id="GetStarted.Title" DefaultValue="Welcome to Bijoy to Unicode Converter"/>
+        <bt:String id="CommandsGroup.Label" DefaultValue="Bijoy Converter"/>
+        <bt:String id="TaskpaneButton.Label" DefaultValue="Open Converter"/>
       </bt:ShortStrings>
       <bt:LongStrings>
-        <bt:String id="GetStarted.Description" DefaultValue="Your sample add-in loaded successfully. Go to the HOME tab and click the 'Show Task Pane' button to get started."/>
-        <bt:String id="TaskpaneButton.Tooltip" DefaultValue="Click to Show a Taskpane"/>
+        <bt:String id="GetStarted.Description" DefaultValue="Convert Bangla text from Bijoy (SutonnyMJ) to Unicode. Open the task pane from the HOME tab to start converting your text."/>
+        <bt:String id="TaskpaneButton.Tooltip" DefaultValue="Open Bijoy to Unicode Converter"/>
       </bt:LongStrings>
     </Resources>
   </VersionOverrides>

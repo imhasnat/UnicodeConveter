@@ -1,9 +1,10 @@
 /*
- * Copyright (c) Microsoft Corporation. All rights reserved. Licensed under the MIT license.
+ * Copyright (c) Hasnat Mahbub. All rights reserved. Licensed under the MIT License.
  * See LICENSE in the project root for license information.
+ * Task pane JavaScript for Bijoy to Unicode Converter Word Add-in
  */
 
-/* global document, Office, Word */
+/* global document, Office, Word */ 
 
 Office.onReady((info) => {
   if (info.host === Office.HostType.Word) {
@@ -11,6 +12,7 @@ Office.onReady((info) => {
     document.getElementById("app-body").classList.remove("app-body-hidden");
      
     document.getElementById("font-info").onclick = getFontInfoOnly;
+    document.getElementById("apply-arabic-font-selection").onclick = applyArabicFontToSelection;
      
     document.getElementById("input-text").addEventListener("input", autoConvertText);
     document.getElementById("input-text").addEventListener("paste", handlePaste); 
@@ -54,6 +56,13 @@ function handlePaste(event) {
     autoConvertText();
   }, 10);
 } 
+
+// Function to detect if text contains Arabic characters
+function containsArabic(text) {
+  // Arabic Unicode ranges: U+0600-U+06FF, U+0750-U+077F, U+08A0-U+08FF, U+FB50-U+FDFF, U+FE70-U+FEFF
+  const arabicPattern = /[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF]/;
+  return arabicPattern.test(text);
+}
 
 // Function to convert multi-line text line by line
 function convertMultiLineText(text) {
@@ -129,7 +138,16 @@ async function getWordFontInfo(context, selection) {
       try {
         const convertedText = ConvertToUnicode("bijoy", selectedText);
         // console.log(`[Font Info] Converted: "${selectedText}" -> "${convertedText}"`); 
-        await selectionRange.insertText(convertedText, Word.InsertLocation.replace); 
+        await selectionRange.insertText(convertedText, Word.InsertLocation.replace);
+        
+        // Apply Arabic font if the converted text contains Arabic characters
+        // Arabic font-family - customize this to your preferred Arabic font
+        const arabicFontFamily = "Arabic Typesetting"; // Change to your preferred Arabic font
+        if (containsArabic(convertedText)) {
+          selectionRange.font.name = arabicFontFamily;
+          await context.sync();
+        }
+        
         updateLoadingProgress("Converting text...", "Selection converted successfully");
         
       } catch (conversionError) {
@@ -175,6 +193,8 @@ async function processWordsWithinSelection(context, selection) {
     let convertedCount = 0;
     const batchSize = 20;
     let pendingEdits = 0;
+    // Arabic font-family - customize this to your preferred Arabic font
+    const arabicFontFamily = "Arabic Typesetting"; // Change to your preferred Arabic font
 
     for (let i = 0; i < wordRanges.items.length; i++) {
       const range = wordRanges.items[i];
@@ -188,6 +208,12 @@ async function processWordsWithinSelection(context, selection) {
           // console.log(`[Font Info] Converted: "${word}" -> "${convertedWord}"`);
           
           await range.insertText(convertedWord, Word.InsertLocation.replace);
+          
+          // Apply Arabic font if the converted text contains Arabic characters
+          if (containsArabic(convertedWord)) {
+            range.font.name = arabicFontFamily;
+          }
+          
           convertedCount++;
           pendingEdits++; 
           updateLoadingProgress("Converting text...", `Converted ${convertedCount} words`);
@@ -233,6 +259,104 @@ export async function getFontInfoOnly() {
       
     } catch (error) {
       console.error("[Font Info Only] Error:", error);
+    }
+  });
+}
+
+// Function to apply Al Majeed Quranic Font to Arabic text in selected text (OPTIMIZED - FASTER)
+export async function applyArabicFontToSelection() {
+  return Word.run(async (context) => {
+    try {
+      const selection = context.document.getSelection();
+      selection.load("text");
+      await context.sync();
+      
+      const selectedText = selection.text || "";
+      if (!selectedText.trim()) {
+        showLoadingSpinner("No selection", "Please select some text first");
+        await new Promise(resolve => setTimeout(resolve, 1500));
+        hideLoadingSpinner();
+        return;
+      }
+      
+      // Quick check: if no Arabic in selection at all, skip processing
+      if (!containsArabic(selectedText)) {
+        showLoadingSpinner("No Arabic text", "No Arabic text found in selection");
+        await new Promise(resolve => setTimeout(resolve, 1500));
+        hideLoadingSpinner();
+        return;
+      }
+      
+      showLoadingSpinner("Applying Arabic font...", "Processing selected text");
+      
+      const arabicFontFamily = "Al Majeed Quranic Font";
+      const wordDelimiters = [" ", ",", "\t", "\r", "\n", "\v", "\u000B", "\u2028", "\u2029", "(", ")", "-", "=", "/", ".", ";", ":", "!", "?"];
+      
+      // OPTIMIZATION: Get all word ranges at once
+      const wordRanges = selection.getTextRanges(wordDelimiters, true);
+      context.load(wordRanges, "items");
+      await context.sync();
+      
+      const totalRanges = wordRanges.items.length;
+      
+      // OPTIMIZATION: Load all text in parallel (single sync)
+      wordRanges.items.forEach(range => {
+        range.load("text");
+      });
+      await context.sync();
+      
+      // OPTIMIZATION: Pre-filter Arabic ranges in memory (no API calls)
+      // Use a Set to track indices of ranges with Arabic for O(1) lookup
+      const arabicRangeIndices = [];
+      for (let i = 0; i < wordRanges.items.length; i++) {
+        const text = wordRanges.items[i].text ? wordRanges.items[i].text.trim() : "";
+        if (text && containsArabic(text)) {
+          arabicRangeIndices.push(i);
+        }
+      }
+      
+      const totalArabicRanges = arabicRangeIndices.length;
+      
+      if (totalArabicRanges === 0) {
+        updateLoadingProgress("Complete!", "No Arabic text found in selection");
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        hideLoadingSpinner();
+        return;
+      }
+      
+      // OPTIMIZATION: Increased batch size for fewer sync calls (500 instead of 50)
+      const batchSize = 500;
+      let processedCount = 0;
+      
+      // OPTIMIZATION: Process in batches - only apply font to Arabic ranges
+      for (let batchStart = 0; batchStart < arabicRangeIndices.length; batchStart += batchSize) {
+        const batchEnd = Math.min(batchStart + batchSize, arabicRangeIndices.length);
+        
+        // Apply font to all ranges in this batch
+        for (let idx = batchStart; idx < batchEnd; idx++) {
+          const rangeIndex = arabicRangeIndices[idx];
+          wordRanges.items[rangeIndex].font.name = arabicFontFamily;
+          processedCount++;
+        }
+        
+        // Single sync per batch (reduced from multiple syncs)
+        await context.sync();
+        
+        // Update progress
+        updateLoadingProgress("Applying Arabic font...", `Processed ${processedCount}/${totalArabicRanges} Arabic ranges`);
+      }
+      
+      updateLoadingProgress("Complete!", `Applied "${arabicFontFamily}" to ${totalArabicRanges} Arabic text ranges`);
+      await new Promise(resolve => setTimeout(resolve, 800));
+      hideLoadingSpinner();
+      
+      console.log(`[Apply Arabic Font Selection] Applied "${arabicFontFamily}" to ${totalArabicRanges} Arabic text ranges (from ${totalRanges} total ranges)`);
+      
+    } catch (error) {
+      console.error("[Apply Arabic Font Selection] Error:", error);
+      updateLoadingProgress("Error", "Failed to apply Arabic font: " + error.message);
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      hideLoadingSpinner();
     }
   });
 }

@@ -67,3 +67,6 @@ Notes
 - `npm run build` — production build
 - `npm run validate` — validate `manifest.xml`
 - `npm run stop` — stop the debugging session 
+- `npm run stop` — stop the debugging session 
+- `npx kill-port 3000` — to terminate the server running on port 3000
+

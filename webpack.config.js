@@ -39,7 +39,15 @@ module.exports = async (env, options) => {
         {
           test: /\.html$/,
           exclude: /node_modules/,
-          use: "html-loader",
+          use: {
+            loader: "html-loader",
+            options: {
+              // Prevent html-loader from rewriting <script>/<link>/<img> URLs.
+              // We need the Office.js file to keep its exact filename
+              // (office.js or office.debug.js) for the runtime check to pass.
+              sources: false,
+            },
+          },
         },
         {
           test: /\.(png|jpg|jpeg|gif|ico)$/,
@@ -59,8 +67,18 @@ module.exports = async (env, options) => {
       new CopyWebpackPlugin({
         patterns: [
           {
-            from: "assets/*",
-            to: "assets/[name][ext][query]",
+            from: "assets",
+            to: "assets",
+          },
+          // Ensure taskpane.css is available at /taskpane.css
+          {
+            from: "src/taskpane/taskpane.css",
+            to: "taskpane.css",
+          },
+          // Make all converter scripts available under /bijoy/*.js
+          {
+            from: "src/bijoy/*.js",
+            to: "bijoy/[name][ext]",
           },
           {
             from: "manifest*.xml",

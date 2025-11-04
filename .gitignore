@@ -1,0 +1,93 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Diagnostic reports (https://nodejs.org/api/report.html)
+report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
+
+# Dependency directories
+node_modules/
+jspm_packages/
+
+# Optional npm cache directory
+.npm
+
+# Optional eslint cache
+.eslintcache
+
+# Optional REPL history
+.node_repl_history
+
+# Output of 'npm pack'
+*.tgz
+
+# Build directories
+dist/
+build/
+tmp/
+temp/
+out/
+coverage/
+.nyc_output/
+
+# TypeScript build output
+*.tsbuildinfo
+
+# dotenv environment variables file
+.env
+.env.test
+.env.development
+.env.production
+.env.local
+
+# VSCode settings
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+
+# IDEs and editors
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Optional lock files
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Optional: ignore Next.js / Nuxt.js / SvelteKit build artifacts
+.next/
+.nuxt/
+.svelte-kit/
+
+# Optional: ignore Storybook build outputs
+storybook-static/
+
+# Optional: ignore serverless / Firebase builds
+.serverless/
+.firebase/
+
+# Optional: ignore temporary test output
+test-results/
+
+# Optional: ignore Bijoy to Unicode Converter files 
+bijoyCount.js
+bijoyConvert.js 
