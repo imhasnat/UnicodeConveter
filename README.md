@@ -92,6 +92,9 @@ npm run stop
 - `npm run stop` — stop the debugging session
 - `npx kill-port 3000` — to terminate the server running on port 3000
 
+## References
+https://bsbk.portal.gov.bd/apps/bangla-converter/index.html which is Developed and Customized by: Md. Elias Hossain, Programmer, Ministry of Land.
+
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
